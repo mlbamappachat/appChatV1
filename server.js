@@ -31,8 +31,8 @@ app.get('/health', function(request, response) {
 app.get('/rooms', function(request, response) {
     const json = [
         {"id" : 1, "name": "ultimate frisbee finals!"},
-        {"id" : 1, "name": "racing finals!"},
-        {"id" : 1, "name": "soccer finals!"}
+        {"id" : 2, "name": "racing finals!"},
+        {"id" : 3, "name": "soccer finals!"}
     ];
     response.send(json);
 });
