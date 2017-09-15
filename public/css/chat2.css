@@ -13,6 +13,16 @@ or in the "license" file accompanying this file. This file is distributed on an 
 	font-size: 12px;
 }
 
+#message-column{
+    padding-left: 1px;
+    padding-right: 5px;
+}
+
+.message-ul{
+	list-style-type: none;
+	padding-left: 5px;
+}
+
 .navbar {
     background-color: #f8981d;
 }
@@ -30,7 +40,20 @@ or in the "license" file accompanying this file. This file is distributed on an 
     border-right: 1px solid #eee;
 }
 
-.rooms {
+.games {
+    position: fixed;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    /*z-index: 1000;*/
+    /*padding: 20px;*/
+    /*overflow-x: hidden;*/
+    overflow: auto;
+    /* Scrollable contents if viewport is shorter than content. */
+    border-right: 1px solid #eee;
+}
+
+.video, .games, .messages, .members {
     position: fixed;
     top: 30px;
     bottom: 0;
@@ -51,7 +74,7 @@ or in the "license" file accompanying this file. This file is distributed on an 
     padding-bottom: .05rem;
 }
 
-.rooms-header {
+.games-header {
     background-color: #F5EDCD;
     color: #545456;
     font-size: .95rem;
@@ -71,7 +94,7 @@ or in the "license" file accompanying this file. This file is distributed on an 
 .messages-header {
     background-color: #EAF0E8;
     color: #545456;
-    font-size: 1rem;
+    font-size: 1.25rem;
     padding-top: .25rem;
     padding-bottom: .25rem;
 }
