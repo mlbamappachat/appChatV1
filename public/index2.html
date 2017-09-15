@@ -16,20 +16,17 @@ or in the "license" file accompanying this file. This file is distributed on an 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="css/bootstrap.4.0.0-alpha.6.min.css">
-    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/chat2.css">
 </head>
 
-<body>
+<body id = "bootstrap-override">
     <div id="app">
-        <nav class="navbar navbar-inverse">
-            <a class="navbar-brand" href="#">BAMTech ESPN Select Chat</a>
-        </nav>
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-sm-2 bg-faded rooms">
-                    <div class="row rooms-header">
+            <nav class="col-sm-1 bg-faded video">
+                                <div class="row rooms-header">
                         <div class="col-sm-8">
-                            Rooms
+                            Games
                         </div>
                     </div>
                     <div class="row rooms-body" v-cloak>
@@ -39,8 +36,12 @@ or in the "license" file accompanying this file. This file is distributed on an 
                             </li>
                         </ul>
                     </div>
+   </nav>
+                <nav class="col-sm-6 offset-sm-1 bg-faded rooms">
+                                <iframe src="http://www.youtube.com/embed/W7qWa52k-nE"
+   width="560" height="315" frameborder="0"></iframe>
                 </nav>
-                <nav class="col-sm-2 offset-sm-2 bg-faded members">
+                <nav class="col-sm-1 offset-sm-11 bg-faded members">
                     <div class="row members-header">
                         <div class="col-sm-12">
                             Members
@@ -48,14 +49,14 @@ or in the "license" file accompanying this file. This file is distributed on an 
                     </div>
                     <div class="row members-body" v-cloak>
                         <ul class="list-group members-group">
-                            <li class="list-group-item member-item justify-content-between bg-faded" v-for="(value, key) in members">
-                                <img v-bind:src="value.avatar" class="rounded-circle mr-1">
+                            <li class="member-item justify-content-between bg-faded" v-for="(value, key) in members">
+                                <img v-bind:src="value.avatar" class="members-avatar">
                                 <small> {{ value.username }}</small>
                             </li>
                         </ul>
                     </div>
                 </nav>
-                <main class="col-sm-10 offset-sm-4 messages-main">
+                <main class="col-sm-4 offset-sm-6 messages-main">
                     <div class="row messages-header">
                         <div class="col-sm-12">
                             Messages
@@ -64,11 +65,10 @@ or in the "license" file accompanying this file. This file is distributed on an 
                     <div class="row messages-body" v-cloak>
                         <div class="col-sm-12">
                             <ul class="list-group message-group">
-                                <li class="list-group-item message-item d-flex" v-for="message in messages" track-by="$index">
-                                    <img v-bind:src="message.avatar" class="rounded-circle float-left mr-2"> {{ message.message }}
-                                    <hr>
-                                    <small class="text-muted">{{ message.username }} @ {{ formatMessageDate(message.date) }}</small>
-                                </li>
+                            	<ul class="message-ul" v-for="message in messages" track-by="$index">
+                            		<li><img v-bind:src="message.avatar" class="members-avatar"> <small class="text-muted">{{ message.username }} {{ formatMessageDate(message.date) }}</small></li>
+                            		<li><small class="chat-message">{{ message.message }}</small></li>
+                            	</ul>
                             </ul>
                         </div>
                     </div>
