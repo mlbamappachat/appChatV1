@@ -115,8 +115,12 @@ or in the "license" file accompanying this file. This file is distributed on an 
 
     <script>
         var socket = io();
-        console.log(this);
-
+        let roomId = Math.floor(Math.random() * 2); // rng 0-1
+        socket.on('connect', function() {
+            let roomName = `defaultRoom-${roomId}`
+            socket.emit('EnterRoom',{room: roomName, id: roomId});
+            console.log("entered room roomName");
+        });
         new Vue({
             el: '#app',
             mixins: [VueFocus.mixin],
@@ -140,19 +144,27 @@ or in the "license" file accompanying this file. This file is distributed on an 
             },
             mounted: function() {
                 socket.on('messages', function(message) {
-                    this.messages.push(message);
+                    if (roomId == message.roomId) {
+                        this.messages.push(message);
+                    }
                 }.bind(this));
                 
                 socket.on('rooms', function(room){
                 	this.rooms.push(room);
                 }.bind(this));
 
-                socket.on('member_add', function(member) {
-                    Vue.set(this.members, member.socket, member);
+                socket.on('member_add', function(member) { // move this logic server side?
+                    let messageRoomId = member.roomId;
+                    if (roomId == messageRoomId) {
+                        Vue.set(this.members, member.socket, member);
+                    }
                 }.bind(this));
 
                 socket.on('member_delete', function(socket_id) {
-                    Vue.delete(this.members, socket_id);
+                    let messageRoomId = socket_id.roomId;
+                    if (roomId == messageRoomId) {
+                        Vue.delete(this.members, socket_id);
+                    }
                 }.bind(this));
 
                 socket.on('message_history', function(messages) {
