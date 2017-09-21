@@ -50,6 +50,10 @@ add_redis_subscriber('messages');
 add_redis_subscriber('member_add');
 add_redis_subscriber('member_delete');
 io.on('connection', function(socket) {
+    socket.on('LeaveRoom', function(data) {
+        socket.leave(data.room);
+        console.log("left room : " + data.room);
+    });
     socket.on('EnterRoom', function(data) {
         socket.join(data.room);
         console.log("User joined: " + data.room);
@@ -106,14 +110,15 @@ io.on('connection', function(socket) {
                     roomId: roomId,
                     message: message_text
                 });
-                //console.log(`sending message to ${roomId}`)
+                console.log(`sending message to ${roomId}`)
                 //console.log(socket.rooms)
                 redis.zadd(`messages`, date, message); //-${roomId}
                 redis.publish(`messages`, message)
             });
 
             socket.on('disconnect', function() {
-                redis.hdel(`members-${roomId}`, socket.id);
+                redis.hdel(`members`, socket.id);
+                console.log("del me");
                 socket.roomId = roomId;
                 redis.publish(`member_delete`, JSON.stringify(socket.id));
             });
