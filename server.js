@@ -52,6 +52,7 @@ add_redis_subscriber('member_delete');
 io.on('connection', function(socket) {
     socket.on('LeaveRoom', function(data) {
         socket.leave(data.room);
+        socket.removeAllListeners('send');
         console.log("left room : " + data.room);
     });
     socket.on('EnterRoom', function(data) {
@@ -111,7 +112,7 @@ io.on('connection', function(socket) {
                     message: message_text
                 });
                 console.log(`sending message to ${roomId}`)
-                //console.log(socket.rooms)
+                console.log(socket.rooms)
                 redis.zadd(`messages`, date, message); //-${roomId}
                 redis.publish(`messages`, message)
             });
