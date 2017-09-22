@@ -105,7 +105,6 @@ or in the "license" file accompanying this file. This file is distributed on an 
     				switchRooms(data[0].id, data[0].url);
     			}
     		}
-    		console.log("this is data: " + data.id);
     	});
     	
     	$('.rooms-item').hover(
@@ -128,8 +127,6 @@ or in the "license" file accompanying this file. This file is distributed on an 
             	$('#room-'+oldRoomId).removeClass('selected-room');
             }
             roomId = id;
-            console.log(roomId);
-            alert(id);
             $("#sports-game").attr('src',"http://www.youtube.com/embed/" + url + "?autoplay=1");
             $('#room-'+roomId).addClass('selected-room');
             socket.emit('EnterRoom',{room: `defaultRoom-${roomId}`, id: roomId});
@@ -139,12 +136,9 @@ or in the "license" file accompanying this file. This file is distributed on an 
     <script>
         var socket = io();
 		roomId = Math.floor(Math.random() * 3) + 1; // rng 0-1
-		console.log(roomId);
         socket.on('connect', function() {
             let roomName = `defaultRoom-${roomId}`
             socket.emit('EnterRoom',{room: roomName, id: roomId});
-            console.log("entered room roomName");
-            console.log("entered room: " + roomName);
         });
 
         new Vue({
@@ -158,8 +152,6 @@ or in the "license" file accompanying this file. This file is distributed on an 
             },
             methods: {
                 send: function() {
-                console.log("this is message");
-                console.log(this);
                     socket.emit('send', this.message);
                     this.message = '';
                 },
@@ -178,7 +170,6 @@ or in the "license" file accompanying this file. This file is distributed on an 
                 }.bind(this));
                 
                 socket.on('rooms', function(room){
-                console.log("This is a room: " + room);
                 	this.rooms.push(room);
                 }.bind(this));
 
