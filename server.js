@@ -29,9 +29,9 @@ app.get('/health', function(request, response) {
 
 app.get('/rooms', function(request, response) {
     const json = [
-        {"id" : 1, "name": "ultimate frisbee finals!"},
-        {"id" : 2, "name": "racing finals!"},
-        {"id" : 3, "name": "soccer finals!"}
+        {"id" : 1, "name": "World Series Cubs - Indians", "url": "EKXzOLAXxwQ"},
+        {"id" : 2, "name": "NHL Fight Highlights", "url": "wS3RwME5OF8"},
+        {"id" : 3, "name": "Nadal v. Federer", "url": "q7AiwWwiF_k"}
     ];
     response.send(json);
 });

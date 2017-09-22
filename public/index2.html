@@ -39,7 +39,7 @@ or in the "license" file accompanying this file. This file is distributed on an 
    </nav>
                 <nav class="col-sm-7 offset-sm-1 bg-faded video">
                                 <iframe src="http://www.youtube.com/embed/W7qWa52k-nE"
-   width="540" height="315" frameborder="0"></iframe>
+   width="540" height="315" frameborder="0" id="sports-game"></iframe>
                 </nav>
                                 <main class="col-sm-3 offset-sm-8 bg-faded messages">
                     <div class="row messages-header">
@@ -98,23 +98,40 @@ or in the "license" file accompanying this file. This file is distributed on an 
     
     <script>
     	$(document).ready(function() {
-    	$.getJSON('http://localhost:3000/rooms', function(data){
+    	$.getJSON('http://bam-035062-ms.local:3000/rooms', function(data){
     		for(var i = 0, length = data.length; i < length; i++){
-    			$("#games-list").append('<li class="list-group-item rooms-item justify-content-between bg-faded room-name-clickable" onclick="switchRooms(' + data[i].id + ')"><small id="' + data[i].id + '">' + data[i].name + '</small></li>');
+    			$("#games-list").append('<li id="room-' + data[i].id + '" class="list-group-item rooms-item justify-content-between bg-faded room-name-clickable" onclick="switchRooms(' + data[i].id + ', \'' + data[i].url +  '\')"><small id="' + data[i].id + '">' + data[i].name + '</small></li>');
+    			if(i == 0){
+    				switchRooms(data[0].id, data[0].url);
+    			}
     		}
     		console.log("this is data: " + data.id);
     	});
+    	
+    	$('.rooms-item').hover(
+    	function() {
+    		$(this).addClass('selected-room');
+    	}, function(){
+    		$(this).removeClass('selected-room');
+    	});
+    	
     	
     	});
     </script>
     
     <script>
-    	function switchRooms(id){
-            let oldRoomId = roomId;
+    	function switchRooms(id, url){
+    	    socket.emit('disconnect');
+    	    if(roomId){
+            	let oldRoomId = roomId;
+            	socket.emit('LeaveRoom', {room: `defaultRoom-${oldRoomId}`});
+            	$('#room-'+oldRoomId).removeClass('selected-room');
+            }
             roomId = id;
             console.log(roomId);
             alert(id);
-            socket.emit('LeaveRoom', {room: `defaultRoom-${oldRoomId}`});
+            $("#sports-game").attr('src',"http://www.youtube.com/embed/" + url + "?autoplay=1");
+            $('#room-'+roomId).addClass('selected-room');
             socket.emit('EnterRoom',{room: `defaultRoom-${roomId}`, id: roomId});
     	}
     </script>
@@ -141,6 +158,8 @@ or in the "license" file accompanying this file. This file is distributed on an 
             },
             methods: {
                 send: function() {
+                console.log("this is message");
+                console.log(this);
                     socket.emit('send', this.message);
                     this.message = '';
                 },
