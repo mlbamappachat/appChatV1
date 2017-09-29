@@ -8,6 +8,7 @@ Licensed under the Amazon Software License (the "License"). You may not use this
 or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
 var faker = require('faker');
+const bodyParser = require('body-parser');
 var moment = require('moment');
 var express = require('express');
 var app = express();
@@ -40,28 +41,13 @@ app.get('/thePage', auth, function (req, res) {
     res.sendFile(__dirname + '/public/index2.html');
 });
 
-/* app.get('/login', function (req, res) {
-    if (!req.query.username) { // change hard factored variables
-        console.log(req.query.username);
-        console.log("above");
-        res.send('login failed');
-    } else if(req.query.username === "amy") {
-        res.send("login success!");
-    }
-}); */
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/login', function(req, res, next) {
-    console.log(JSON.stringify(req.params));
-    //if (0 == 0 ) {
-    if (req.body.username && req.body.password) {
-        // check user/pass in DB
+    console.log(JSON.stringify(req.body));
+    if (req.body.username && req.body.password && tryLogin(req.body)) {
         req.session.authenticated = true;
         res.redirect('/thePage');
-    } /* else if (!req.body.username) {
-        res.send("No username present")
-    } else if (!req.body.password) {
-        res.send("No password present")
-    } */ else {
+    } else {
         res.send("Username and password are incorrect");
         //req.flash('error', 'Username and password are incorrect');
         //res.redirect('/login'); // TODO redirect to html page -  see thePage
@@ -205,15 +191,16 @@ function tryLogin(data) {
     var password = data.password;
     var sql = 'Select password from BAMTECHChat.Users where username = "' + username + '";'
     console.log(sql);
-    con.query(sql, function (err, result, fields) {
+    return con.query(sql, function (err, result, fields) {
         if (err) {
             console.log(err);
-            return;
+            return false;
         }
         console.log(result);
         console.log(result[0].password);
         if (password == result[0].password) {
             //TODO: Enter room as user
+            return true;
         }
     });
 
