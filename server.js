@@ -32,7 +32,8 @@ app.use(session({
 }));
 
 var auth = function(req, res, next) {
-    if (req.session.authenticated = true)
+    console.log(req.session.authenticated);
+    if (req.session.authenticated == true)
         return next();
     else
         return res.sendStatus(401);
