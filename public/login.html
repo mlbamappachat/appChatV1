@@ -1,0 +1,24 @@
+ <form id="login">
+
+  <div class="container">
+    <label><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="username" required>
+
+    <label><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" required>
+  </div>
+</form> 
+
+<div id ="login-failed" style="visibility:hidden"> Login Failed! </div>
+
+<button onclick="tryLogin()"> Login </button>
+
+<script src="js/socket.io/1.7.2/socket.io.min.js"></script>
+<script src="js/jquery-3.2.1.js"></script>
+
+<script>
+	var socket = io();
+	function tryLogin(){
+		socket.emit('login',{username: document.getElementById('login').elements['username'].value, password: document.getElementById('login').elements['password'].value});
+	}
+</script>
