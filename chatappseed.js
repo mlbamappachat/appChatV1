@@ -9,7 +9,7 @@ var con = mysql.createConnection({
   host: "localhost",
   user: "root",
   port: "3306",
-  password: "12jaja12",
+  password: "appchat",
   database: "BAMTECHChat"
 });
 

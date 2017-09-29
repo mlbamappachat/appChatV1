@@ -14,6 +14,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
+var mysql = require('mysql');
 
 var Redis = require('ioredis');
 var redis_address = process.env.REDIS_ADDRESS || 'redis://127.0.0.1:6379';
@@ -50,6 +51,9 @@ add_redis_subscriber('messages');
 add_redis_subscriber('member_add');
 add_redis_subscriber('member_delete');
 io.on('connection', function(socket) {
+	socket.on('login', function(data){
+		tryLogin(data);
+	});
     socket.on('LeaveRoom', function(data) {
         socket.leave(data.room);
         socket.removeAllListeners('send');
@@ -132,3 +136,35 @@ io.on('connection', function(socket) {
 http.listen(port, function() {
     console.log('Started server on port ' + port);
 });
+
+function tryLogin(data){
+	console.log("Hey");
+		var username = data.username;
+		
+		var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  port: "3306",
+  password: "appchat",
+  database: "BAMTECHChat"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+});
+		var password = data.password;
+		var sql = 'Select password from BAMTECHChat.Users where username = "' + username + '";'
+		console.log(sql);
+	con.query(sql, function(err, result, fields){
+		if(err){
+			console.log(err);
+			return;
+		}
+		console.log(result);
+		console.log(result[0].password);
+		if(password == result[0].password){
+			//TODO: Enter room as user
+		}
+	});
+		
+}
