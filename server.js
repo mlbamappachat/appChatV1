@@ -32,7 +32,7 @@ app.use(session({
 }));
 
 var auth = function(req, res, next) {
-    console.log(req.session.authenticated);
+    console.log("here : "  +req.session.authenticated);
     if (req.session.authenticated == true)
         return next();
     else
@@ -45,10 +45,13 @@ app.get('/thePage', auth, function (req, res) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/login', function(req, res, next) {
     console.log(JSON.stringify(req.body));
-    if (req.body.username && req.body.password && tryLogin(req.body)) {
-        req.session.authenticated = true;
-        res.redirect('/thePage');
+    if (req.body.username && req.body.password) {
+        tryLogin(req, res);
+        //&& tryLogin(req)) {
+        //req.session.authenticated = true;
+        //res.redirect('/thePage');
     } else {
+        console.log("WTF");
         res.setStatus(401);
         res.send("Username and password are incorrect");
         //req.flash('error', 'Username and password are incorrect');
@@ -89,9 +92,6 @@ add_redis_subscriber('messages');
 add_redis_subscriber('member_add');
 add_redis_subscriber('member_delete');
 io.on('connection', function(socket) {
-	socket.on('login', function(data){
-		tryLogin(data);
-	});
     socket.on('LeaveRoom', function(data) {
         socket.leave(data.room);
         socket.removeAllListeners('send');
@@ -175,9 +175,10 @@ http.listen(port, function() {
     console.log('Started server on port ' + port);
 });
 
-function tryLogin(data) {
+function tryLogin(data, res) {
     console.log("Hey");
-    var username = data.username;
+    
+    var username = data.body.username;
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -190,20 +191,24 @@ function tryLogin(data) {
     con.connect(function (err) {
         if (err) throw err;
     });
-    var password = data.password;
+    var password = data.body.password;
     var sql = 'Select password from BAMTECHChat.Users where username = "' + username + '";'
     console.log(sql);
-    return con.query(sql, function (err, result, fields) {
-        if (err) {
+    con.query(sql, function (err, result, fields) {
+        if (err || !result[0]) {
             console.log(err);
             return false;
         }
-        console.log(result);
-        console.log(result[0].password);
         if (password == result[0].password) {
             //TODO: Enter room as user
+            console.log("wOO");
+            data.session.authenticated = true;
+            res.send(200);
             return true;
         }
     });
+    //).then(console.log("test"));
+    //console.log("asd: " + returnValue);
+    //return returnValue;
 
 }
