@@ -98,7 +98,7 @@ or in the "license" file accompanying this file. This file is distributed on an 
     
     <script>
     	$(document).ready(function() {
-    	$.getJSON('http://bam-035062-ms.local:3000/rooms', function(data){
+    	$.getJSON('http://localhost:3000/rooms', function(data){
     		for(var i = 0, length = data.length; i < length; i++){
     			$("#games-list").append('<li id="room-' + data[i].id + '" class="list-group-item rooms-item justify-content-between bg-faded room-name-clickable" onclick="switchRooms(' + data[i].id + ', \'' + data[i].url +  '\')"><small id="' + data[i].id + '">' + data[i].name + '</small></li>');
     			if(i == 0){

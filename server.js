@@ -15,6 +15,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 var mysql = require('mysql');
+var session = require('express-session');
 
 var Redis = require('ioredis');
 var redis_address = process.env.REDIS_ADDRESS || 'redis://127.0.0.1:6379';
@@ -22,6 +23,55 @@ var redis_address = process.env.REDIS_ADDRESS || 'redis://127.0.0.1:6379';
 var redis = new Redis(redis_address);
 var redis_subscribers = {};
 var channel_history_max = 10;
+
+app.use(session({
+    secret: '2C44-4D44-WppQ38S', //  what is this?
+    resave: true,
+    saveUninitialized: true
+}));
+
+var auth = function(req, res, next) {
+    if (req.session.authenticated = true)
+        return next();
+    else
+        return res.sendStatus(401);
+};
+app.get('/thePage', auth, function (req, res) {
+    res.sendFile(__dirname + '/public/index2.html');
+});
+
+/* app.get('/login', function (req, res) {
+    if (!req.query.username) { // change hard factored variables
+        console.log(req.query.username);
+        console.log("above");
+        res.send('login failed');
+    } else if(req.query.username === "amy") {
+        res.send("login success!");
+    }
+}); */
+
+app.post('/login', function(req, res, next) {
+    console.log(JSON.stringify(req.params));
+    //if (0 == 0 ) {
+    if (req.body.username && req.body.password) {
+        // check user/pass in DB
+        req.session.authenticated = true;
+        res.redirect('/thePage');
+    } /* else if (!req.body.username) {
+        res.send("No username present")
+    } else if (!req.body.password) {
+        res.send("No password present")
+    } */ else {
+        res.send("Username and password are incorrect");
+        //req.flash('error', 'Username and password are incorrect');
+        //res.redirect('/login'); // TODO redirect to html page -  see thePage
+    }
+});
+
+app.get('/logout', function (req, res) {
+    req.session.destroy();
+    res.send("logout success!");
+});
 
 app.use(express.static('public'));
 app.get('/health', function(request, response) {
@@ -137,34 +187,34 @@ http.listen(port, function() {
     console.log('Started server on port ' + port);
 });
 
-function tryLogin(data){
-	console.log("Hey");
-		var username = data.username;
-		
-		var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  port: "3306",
-  password: "appchat",
-  database: "BAMTECHChat"
-});
+function tryLogin(data) {
+    console.log("Hey");
+    var username = data.username;
 
-con.connect(function(err) {
-  if (err) throw err;
-});
-		var password = data.password;
-		var sql = 'Select password from BAMTECHChat.Users where username = "' + username + '";'
-		console.log(sql);
-	con.query(sql, function(err, result, fields){
-		if(err){
-			console.log(err);
-			return;
-		}
-		console.log(result);
-		console.log(result[0].password);
-		if(password == result[0].password){
-			//TODO: Enter room as user
-		}
-	});
-		
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        port: "3306",
+        password: "appchat",
+        database: "BAMTECHChat"
+    });
+
+    con.connect(function (err) {
+        if (err) throw err;
+    });
+    var password = data.password;
+    var sql = 'Select password from BAMTECHChat.Users where username = "' + username + '";'
+    console.log(sql);
+    con.query(sql, function (err, result, fields) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log(result);
+        console.log(result[0].password);
+        if (password == result[0].password) {
+            //TODO: Enter room as user
+        }
+    });
+
 }
