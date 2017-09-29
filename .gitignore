@@ -56,3 +56,7 @@ jspm_packages
 
 # Target Files
 target
+
+public/css/chat3.css
+
+public/index3.html
